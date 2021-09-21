@@ -10,9 +10,6 @@ const { authMiddleware } = require('./utils/auth');
 // DATABASE CONNECTION
 const db = require('./config/connection');
 
-// DO WE NEED THIS!?!?
-// const routes = require('./routes');
-
 // SET PORT AND INSTANCE OF EXPRESS SERVER
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -36,9 +33,6 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }
-
-// DO WE NEED THIS!?!?
-// app.use(routes);
 
 // WILDCARD ROUTE TO DIRECT TO HOMEPAGE
 app.get('*', (req, res) => {
