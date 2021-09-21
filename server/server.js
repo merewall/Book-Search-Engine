@@ -1,13 +1,11 @@
-// BRING IN EXPRESS MODULE
+// BRING IN EXPRESS MODULE, APOLLO SERVER, AND PATH MODULE
 const express = require('express');
-// BRING IN APOLLO SERVER
 const { ApolloServer } = require('apollo-server-express');
-
-// BRING IN PATH MODULE
 const path = require('path');
 
-// BRING IN TYPEDEFS AND RESOLVERS
+// BRING IN TYPEDEFS, RESOLVERS, AND AUTHORIZATION MIDDELWARE UTILITY
 const { typeDefs, resolvers } = require('./schemas');
+const { authMiddleware } = require('./utils/auth');
 
 // DATABASE CONNECTION
 const db = require('./config/connection');
@@ -23,6 +21,8 @@ const app = express();
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  // USE CONTEXT ON SERVER SO DATA CAN BE PASSED FROM AUTHMIDDLEWARE TO RESOLVER FUNCTIONS
+  context: authMiddleware,
 });
 
 // CONNECT APOLLO SERVER TO EXPRESS
@@ -32,7 +32,7 @@ server.applyMiddleware({ app });
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// if we're in production, serve client/build as static assets
+// SERVE UP STATIC ASSETS
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../client/build')));
 }
