@@ -1,3 +1,4 @@
+// BRING IN AUTHENTICATION ERROR MODULE, USER MODEL AND SIGNTOKEN MIDDLEWARE
 const { AuthenticationError } = require('apollo-server-express');
 const { User } = require('../models');
 const { signToken } = require('../utils/auth');
@@ -34,7 +35,7 @@ const resolvers = {
         throw new AuthenticationError('No profile with this email found!');
       }
 
-      const correctPw = await user.isCorrectPassword(user);
+      const correctPw = await user.isCorrectPassword(password);
 
       if (!correctPw) {
         throw new AuthenticationError('Incorrect password!');
@@ -45,11 +46,11 @@ const resolvers = {
     },
 
     // Add a third argument to the resolver to access data in our `context`
-    saveBook: async (parent, { userId, book}, context) => {
+    saveBook: async (parent, { book }, context) => {
       // If context has a `user` property, that means the user executing this mutation has a valid JWT and is logged in
       if (context.user) {
         return User.findOneAndUpdate(
-          { _id: userId },
+          { _id: context.user._id },
           {
             $addToSet: { savedBooks: book },
           },
@@ -70,11 +71,11 @@ const resolvers = {
     //   throw new AuthenticationError('You need to be logged in!');
     // },
     // Make it so a logged in user can only remove a skill from their own profile
-    deleteBook: async (parent, { userId, book }, context) => {
+    removeBook: async (parent, { bookId }, context) => {
       if (context.user) {
         return User.findOneAndUpdate(
           { _id: context.user._id },
-          { $pull: { savedBooks: book } },
+          { $pull: { savedBooks: { bookId } } },
           { new: true }
         );
       }
