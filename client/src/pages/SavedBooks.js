@@ -16,7 +16,7 @@ const SavedBooks = () => {
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
   const userData = data?.me || {};
-  console.log("this is it:", userData)
+  // console.log("this is it:", userData)
 
   // use this to determine if `useEffect()` hook needs to run again
   // const userDataLength = Object.keys(userData).length;
@@ -55,7 +55,7 @@ const SavedBooks = () => {
     }
 
     try {
-      const { data } = await removeBook({
+      await removeBook({
         variables: { bookId }
       });
 
@@ -67,10 +67,11 @@ const SavedBooks = () => {
       // setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId( bookId );
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
+
 
   // if data isn't here yet, say so
   if (loading) {
@@ -94,7 +95,7 @@ const SavedBooks = () => {
           {userData.savedBooks?.map((book) => {
             return (
               <Card key={book?.bookId} border='dark'>
-                {book?.image ? <Card.Img src={book?.image} alt={`The cover for ${book?.title}`} variant='top' /> : null}
+                {book?.image ? <a href={book?.link || "#a"} target="_blank" rel="noopener noreferrer"><Card.Img src={book?.image} alt={`The cover for ${book?.title}`} variant='top' /></a> : null}
                 <Card.Body>
                   <Card.Title>{book?.title}</Card.Title>
                   <p className='small'>Authors: {book?.authors}</p>
@@ -108,6 +109,11 @@ const SavedBooks = () => {
           })}
         </CardColumns>
       </Container>
+      {error && (
+        <div className="my-3 p-3 bg-danger text-white">
+          {error.message}
+        </div>
+      )}
     </>
   );
 };

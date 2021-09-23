@@ -45,6 +45,7 @@ const SearchBooks = () => {
         throw new Error('something went wrong!');
       }
 
+
       const { items } = await response.json();
 
       const bookData = items.map((book) => ({
@@ -53,7 +54,10 @@ const SearchBooks = () => {
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
+        link: book.volumeInfo.previewLink || "#a"
       }));
+
+      // console.log(bookData[0])
 
       setSearchedBooks(bookData);
       setSearchInput('');
@@ -76,7 +80,7 @@ const SearchBooks = () => {
     }
 
     try {
-      const { data } = await saveBook({
+      await saveBook({
         variables: {...bookToSave},
       });
 
@@ -129,7 +133,9 @@ const SearchBooks = () => {
             return (
               <Card key={book.bookId} border='dark'>
                 {book.image ? (
-                  <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
+                  <a href={book.link} target="_blank" rel="noopener noreferrer">
+                    <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
+                  </a>
                 ) : null}
                 <Card.Body>
                   <Card.Title>{book.title}</Card.Title>
@@ -151,6 +157,11 @@ const SearchBooks = () => {
           })}
         </CardColumns>
       </Container>
+      {error && (
+        <div className="my-3 p-3 bg-danger text-white">
+          {error.message}
+        </div>
+      )}
     </>
   );
 };
