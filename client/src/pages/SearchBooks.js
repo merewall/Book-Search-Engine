@@ -48,16 +48,23 @@ const SearchBooks = () => {
 
       const { items } = await response.json();
 
+      console.log(items[0].volumeInfo.previewLink.split(':')[1])
+
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
-        image: book.volumeInfo.imageLinks?.thumbnail || '',
-        link: book.volumeInfo.previewLink || "#a"
+        image: book.volumeInfo.imageLinks?.thumbnail.split(':')[1] || '',
+        link: book.volumeInfo.previewLink.split(':')[1] || "#a",
       }));
 
       // console.log(bookData[0])
+      // const bookLink = bookData[0].link
+      // const arrayBookLink = bookLink.split(':')
+      // arrayBookLink.splice(1,0,'s:')
+      // const secureBookLink = arrayBookLink.join('')
+      // console.log("securelink:",secureBookLink)
 
       setSearchedBooks(bookData);
       setSearchInput('');
@@ -133,12 +140,12 @@ const SearchBooks = () => {
             return (
               <Card key={book.bookId} border='dark'>
                 {book.image ? (
-                  <a href={book.link} target="_blank" rel="noopener noreferrer">
-                    <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' />
+                  <a href={`https:${book.link}`} target="_blank" rel="noopener noreferrer">
+                    <Card.Img src={`https:${book.image}`} alt={`The cover for ${book.title}`} variant='top' />
                   </a>
                 ) : null}
                 <Card.Body>
-                  <Card.Title><a href={book.link} target="_blank" rel="noopener noreferrer">{book.title}</a></Card.Title>
+                  <Card.Title><a href={`https:${book.link}`} target="_blank" rel="noopener noreferrer">{book.title}</a></Card.Title>
                   <p className='small'>Authors: {book.authors}</p>
                   <Card.Text>{book.description}</Card.Text>
                   {Auth.loggedIn() && (
