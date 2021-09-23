@@ -16,6 +16,7 @@ const SavedBooks = () => {
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
   const userData = data?.me || {};
+  console.log("this is it:", userData)
 
   // use this to determine if `useEffect()` hook needs to run again
   // const userDataLength = Object.keys(userData).length;
@@ -90,15 +91,15 @@ const SavedBooks = () => {
             : 'You have no saved books!'}
         </h2>
         <CardColumns>
-          {userData.savedBooks.map((book) => {
+          {userData.savedBooks?.map((book) => {
             return (
-              <Card key={book.bookId} border='dark'>
-                {book.image ? <Card.Img src={book.image} alt={`The cover for ${book.title}`} variant='top' /> : null}
+              <Card key={book?.bookId} border='dark'>
+                {book?.image ? <Card.Img src={book?.image} alt={`The cover for ${book?.title}`} variant='top' /> : null}
                 <Card.Body>
-                  <Card.Title>{book.title}</Card.Title>
-                  <p className='small'>Authors: {book.authors}</p>
-                  <Card.Text>{book.description}</Card.Text>
-                  <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
+                  <Card.Title>{book?.title}</Card.Title>
+                  <p className='small'>Authors: {book?.authors}</p>
+                  <Card.Text>{book?.description}</Card.Text>
+                  <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book?.bookId)}>
                     Delete this Book!
                   </Button>
                 </Card.Body>

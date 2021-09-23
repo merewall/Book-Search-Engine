@@ -7,7 +7,7 @@ const expiration = '2h';
 
 module.exports = {
   // FUNCTION FOR OUR AUTHENTICATED ROUTES
-  authMiddleware: function (req, res, next) {
+  authMiddleware: function ({req}) {
     // ALLOWS TOKEN TO BE SENT VIA REQ.BODY, REQ.QUERY OR HEADERS
     let token = req.body.token || req.query.token || req.headers.authorization;
 
@@ -19,7 +19,8 @@ module.exports = {
 
     // IF NO TOKEN, SEND ERROR STATUS AND MESSAGE
     if (!token) {
-      return res.status(400).json({ message: 'You have no token!' });
+      // return res.status(400).json({ message: 'You have no token!' });
+      return req;
     }
 
     // IF TOKEN IS VERIFIED, ADD THE DECODED USER'S DATA TO THE REQUEST SO IT CAN BE ACCESSED BY THE RESOLVER, OTHERWISE SEND ERROR MESSAGE
@@ -28,11 +29,12 @@ module.exports = {
       req.user = data;
     } catch {
       console.log('Invalid token');
-      return res.status(400).json({ message: 'invalid token!' });
+      // return res.status(400).json({ message: 'invalid token!' });
     }
 
     // SEND TO NEXT ENDPOINT
-    next();
+    // next();
+    return req;
   },
   // PASSING THE USER'S USERNAME, EMAIL AND ID FROM THE LOGIN RESOLVER TO THE SIGNTOKEN FUNCTION
   signToken: function ({ username, email, _id }) {
