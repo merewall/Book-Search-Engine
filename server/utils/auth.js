@@ -1,13 +1,10 @@
-// BRING IN JSON WEB TOKEN MODULE
+// BRING IN JSON WEB TOKEN MODULE AND ENVIRONMENT VARIABLES
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
 // SET TOKEN SECRET AND EXPIRATION
-// const secret = 'mysecretsshhhhh';
 const secret = process.env.SECRET;
 const expiration = '2h';
-// console.log('SECRET:', secret)
-// console.log("SECRET:", process.env.secret)
 
 module.exports = {
   // FUNCTION FOR OUR AUTHENTICATED ROUTES
@@ -33,11 +30,9 @@ module.exports = {
       req.user = data;
     } catch {
       console.log('Invalid token');
-      // return res.status(400).json({ message: 'invalid token!' });
     }
 
-    // SEND TO NEXT ENDPOINT
-    // next();
+    // RETURN REQUEST
     return req;
   },
   // PASSING THE USER'S USERNAME, EMAIL AND ID FROM THE LOGIN RESOLVER TO THE SIGNTOKEN FUNCTION
