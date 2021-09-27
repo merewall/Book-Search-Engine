@@ -1,8 +1,8 @@
+// BRING IN MONGOOSE MODULE AND ENVIRONMENT VARIABLES
 const mongoose = require('mongoose');
 require('dotenv').config()
 
-console.log("process.env.secret:", process.env.SECRET)
-
+// CONNECT TO MONGOOSE DATABASE
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/googlebooks', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
