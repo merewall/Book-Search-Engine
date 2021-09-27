@@ -4,7 +4,7 @@ require('dotenv').config()
 
 // SET TOKEN SECRET AND EXPIRATION
 // const secret = 'mysecretsshhhhh';
-const secret = process.env.secret;
+const secret = process.env.SECRET;
 const expiration = '2h';
 // console.log('SECRET:', secret)
 // console.log("SECRET:", process.env.secret)
