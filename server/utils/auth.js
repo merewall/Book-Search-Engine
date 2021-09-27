@@ -1,9 +1,13 @@
 // BRING IN JSON WEB TOKEN MODULE
 const jwt = require('jsonwebtoken');
+require('dotenv').config()
 
 // SET TOKEN SECRET AND EXPIRATION
-const secret = 'mysecretsshhhhh';
+// const secret = 'mysecretsshhhhh';
+const secret = process.env.secret;
 const expiration = '2h';
+// console.log('SECRET:', secret)
+// console.log("SECRET:", process.env.secret)
 
 module.exports = {
   // FUNCTION FOR OUR AUTHENTICATED ROUTES
