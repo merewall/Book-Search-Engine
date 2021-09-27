@@ -1,9 +1,11 @@
+// BRING IN MONGOOSE SCHEMA AND MODEL MODULES AND BCRYPT
 const { Schema, model } = require('mongoose');
 const bcrypt = require('bcrypt');
 
 // import schema from Book.js
 const bookSchema = require('./Book');
 
+// USER SCHEMA
 const userSchema = new Schema(
   {
     username: {
