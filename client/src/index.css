@@ -24,3 +24,9 @@ h6 {
 .card-title a:hover {
   color: rgba(33, 37, 41, 0.6);
 }
+
+#site-logo {
+  width: 2rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
+}
