@@ -1,20 +1,22 @@
-// see SignupForm.js for comments
+// BRING IN REACT, USESTATE, AND REACT-BOOTSTRAP MODULES
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-
+// BRING IN MUTATINOS FOR LOGGING IN A USER
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../utils/mutations';
-
-// import { loginUser } from '../utils/API';
+// BRING IN AUTHENTICATION SERVICES FUNCTIONS
 import Auth from '../utils/auth';
 
 const LoginForm = () => {
+  // SET STATE FOR USER'S FORM DATA
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
+  // SET STATE FOR FORM VALIDATION
   const [validated] = useState(false);
+  // SET STATE FOR SHOWING ALERTS
   const [showAlert, setShowAlert] = useState(false);
-
+  // USE MUTATION HOOK FOR LOGGING IN A USER AND GIVE THEM A TOKEN
   const [login, { error }] = useMutation(LOGIN_USER);
-
+  // UPON FORM INPUT CHANGES, SET STATE FOR FORM DATA WITH INPUTS
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
@@ -22,7 +24,6 @@ const LoginForm = () => {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log("logged in user data:", userFormData)
 
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
@@ -32,25 +33,18 @@ const LoginForm = () => {
     }
 
     try {
+      // USE LOGIN MUTATION TO LOG IN A USER WITH THE FORM INPUTS
       const { data } = await login({
         variables: {...userFormData},
       })
-
+      // SET USER'S TOKEN TO LOCAL STORAGE
       Auth.login(data.login.token);
-      // const response = await loginUser(userFormData);
-
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
-      // const { token, user } = await response.json();
-      // console.log(user);
-      // Auth.login(token);
+    
     } catch (error) {
       console.error(error);
       setShowAlert(true);
     }
-
+    // RESET FORM TO EMPTY FORM
     setUserFormData({
       username: '',
       email: '',
@@ -58,6 +52,7 @@ const LoginForm = () => {
     });
   };
 
+  // LOGIN FORM COMPONENT
   return (
     <>
       <Form noValidate validated={validated} onSubmit={handleFormSubmit}>

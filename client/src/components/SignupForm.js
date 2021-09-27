@@ -1,30 +1,33 @@
+// IMPORT REACH, USESTATE, REACT-BOOTSTRAP MODULES
 import React, { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
+// IMPORT MUTATION MODULES FOR ADDING A NEW USER TO DATABASE
 import { useMutation } from '@apollo/client';
 import { ADD_USER } from '../utils/mutations';
 
-// import { createUser } from '../utils/API';
+// IMPORT AUTHENTICATION SERVICES FUNCTIONS
 import Auth from '../utils/auth';
 
 const SignupForm = () => {
-  // set initial form state
+  // set initial form state to empty fields
   const [userFormData, setUserFormData] = useState({ username: '', email: '', password: '' });
   // set state for form validation
   const [validated] = useState(false);
   // set state for alert
   const [showAlert, setShowAlert] = useState(false);
-
+  // Invoke `useMutation()` hook to return a Promise-based function and data about the ADD_USER mutation
   const [addUser, { error }] = useMutation(ADD_USER);
 
+  // function to watch for changes to form entry and set inputs to state
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
   };
 
+  // function to handle "signup" form submission
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log(userFormData);
 
     // check if form has everything (as per react-bootstrap docs)
     const form = event.currentTarget;
@@ -34,24 +37,18 @@ const SignupForm = () => {
     }
 
     try {
-      // const response = await createUser(userFormData);
+      // add a user to the database using the form inputs
       const { data } = await addUser({
         variables: {...userFormData},
       });
 
+      // SET USER'S TOKEN TO LOCAL STORAGE
       Auth.login(data.addUser.token);
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
-      // const { token, user } = await response.json();
-      // console.log(user);
-      // Auth.login(token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
     }
-
+    // reset form to empty fields
     setUserFormData({
       username: '',
       email: '',

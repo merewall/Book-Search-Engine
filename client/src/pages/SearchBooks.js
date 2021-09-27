@@ -7,8 +7,10 @@ import { Jumbotron, Container, Col, Form, Button, Card, CardColumns } from 'reac
 import { useMutation } from '@apollo/client';
 import { SAVE_BOOK } from '../utils/mutations'
 
+// BRING IN AUTHENTICATION SERVICES FUNCTIONS
 import Auth from '../utils/auth';
-// import { saveBook, searchGoogleBooks } from '../utils/API';
+
+// BRING IN FUNCTIONS FOR HANDLING LOCAL STORAGE
 import { saveBookIds, getSavedBookIds } from '../utils/localStorage';
 
 const SearchBooks = () => {
@@ -16,10 +18,8 @@ const SearchBooks = () => {
   const [searchedBooks, setSearchedBooks] = useState([]);
   // create state for holding our search field data
   const [searchInput, setSearchInput] = useState('');
-
   // create state to hold saved bookId values
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
-
   // Invoke `useMutation()` hook to return a Promise-based function and data about the SAVE_BOOK mutation
   const [saveBook, { error }] = useMutation(SAVE_BOOK);
 
@@ -38,35 +38,31 @@ const SearchBooks = () => {
     }
 
     try {
-      // const response = await searchGoogleBooks(searchInput);
+      // USE GOOGLE BOOKS API TO FETCH BOOKS QUERYING WITH SEARCH INPUT
       const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchInput}`);
 
+      // ERROR IF API DOESN'T RETURN RESPONSE
       if (!response.ok) {
         throw new Error('something went wrong!');
       }
 
-
+      // SAVE RESPONSE AS JSON
       const { items } = await response.json();
 
-      console.log(items[0].volumeInfo)
-
+      // USE JSON DATA TO CREATE ARRAY OF BOOK DATA WITH SPECIFIED PROPERTIES
       const bookData = items.map((book) => ({
         bookId: book.id,
         authors: book.volumeInfo.authors || ['No author to display'],
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
+        // REMOVE HTTP FROM IMAGE LINK SO THE LINK CAN BE SET TO A SECURE HTTPS LINK
         image: book.volumeInfo.imageLinks?.thumbnail.split(':')[1] || '',
         link: book.volumeInfo.infoLink || "#a",
       }));
 
-      // console.log(bookData[0])
-      // const bookLink = bookData[0].link
-      // const arrayBookLink = bookLink.split(':')
-      // arrayBookLink.splice(1,0,'s:')
-      // const secureBookLink = arrayBookLink.join('')
-      // console.log("securelink:",secureBookLink)
-
+      // SET SEARCHEDBOOKS STATE WITH ALL BOOKDATA
       setSearchedBooks(bookData);
+      // RESET SEARCH INPUT TO BLANK FIELD
       setSearchInput('');
     } catch (err) {
       console.error(err);
@@ -77,9 +73,8 @@ const SearchBooks = () => {
   const handleSaveBook = async (bookId) => {
     // find the book in `searchedBooks` state by the matching id
     const bookToSave = searchedBooks.find((book) => book.bookId === bookId);
-    console.log(bookToSave);
 
-    // get token
+    // get token (KEEPS UNLOGGED USER FROM SAVING A BOOK)
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
     if (!token) {
@@ -87,13 +82,10 @@ const SearchBooks = () => {
     }
 
     try {
+      // USE SAVE BOOK MUTATION TO SAVE BOOK TO USER'S SAVED BOOKS
       await saveBook({
         variables: {...bookToSave},
       });
-
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
 
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
@@ -102,6 +94,9 @@ const SearchBooks = () => {
     }
   };
 
+  // SEARCH BOOKS PAGE
+  // INCLUDES FORM FOR SEARCH INPUT AND A CARD FOR UPT TO FIRST 10 BOOKS RETURNED IN SEARCH RESULTS
+  // EACH BOOK CARD INCLUDES A TITLE, DESCRIPTION, AUTHOR(S), IMAGE, AND LINK TO GOOGLE BOOKS SITE
   return (
     <>
       <Jumbotron fluid className='text-light bg-dark'>

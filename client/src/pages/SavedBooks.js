@@ -1,83 +1,53 @@
+// BRING IN REACT AND REACT-BOOTSTRAP MODULES
 import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
 
-// import { getMe, deleteBook } from '../utils/API';
+// BRING IN AUTHENTICATION SERVICES FUNCTIONS
 import Auth from '../utils/auth';
 
+// BRING IN QUERY AND MUTATION MODULES FOR APOLLO CLIENT
 import { useQuery, useMutation } from '@apollo/client';
 import { QUERY_ME } from '../utils/queries';
 import { REMOVE_BOOK } from '../utils/mutations';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  // const [userData, setUserData] = useState({});
+  
   const { loading, data } = useQuery(QUERY_ME);
-
   const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
+  // SET USER DATA TO VARIABLE
   const userData = data?.me || {};
-  // console.log("this is it:", userData)
-
-  // use this to determine if `useEffect()` hook needs to run again
-  // const userDataLength = Object.keys(userData).length;
-
-  // useEffect(() => {
-  //   const getUserData = async () => {
-  //     try {
-  //       const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-  //       if (!token) {
-  //         return false;
-  //       }
-
-  //       const response = await getMe(token);
-
-  //       if (!response.ok) {
-  //         throw new Error('something went wrong!');
-  //       }
-
-  //       const user = await response.json();
-  //       setUserData(user);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-
-  //   getUserData();
-  // }, [userDataLength]);
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
+    // GRAB USER TOKEN IF USER LOGGED IN
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
+    // IF USER NOT LOGGED IN, DON'T CONTINUE
     if (!token) {
       return false;
     }
 
+    // USE MUTATION TO REMOVE THE BOOK BY BOOK ID
     try {
       await removeBook({
         variables: { bookId }
       });
 
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
-      // const updatedUser = await response.json();
-      // setUserData(updatedUser);
-      // upon success, remove book's id from localStorage
+      // REMOVE BOOK ID FROM LOCAL STORAGE
       removeBookId( bookId );
     } catch (error) {
       console.error(error);
     }
   };
 
-
   // if data isn't here yet, say so
   if (loading) {
     return <h2>LOADING...</h2>;
   }
 
+  // MAP USER'S SAVED BOOKS TO SHOW EACH BOOK AS A CARD WITH TITLE, AUTHOR(S), DESCRIPTION, IMAGE AND LINK TO GOOGLE BOOKS SITE AS WELL AS A BUTTON TO DELETE THE BOOK FROM SAVED BOOKS
   return (
     <>
       <Jumbotron fluid className='text-light bg-dark'>

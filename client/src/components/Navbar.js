@@ -1,11 +1,15 @@
+// BRING IN REACT, USESTATE, LINK MODULES
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+// BRING IN REACT-BOOTSTRAP FOR APP RENDERING AND STYLING
 import { Navbar, Nav, Container, Modal, Tab } from 'react-bootstrap';
+// BRING IN LOGIN AND SIGNUP COMPONENTS FOR RENDERING MODALE
 import SignUpForm from './SignupForm';
 import LoginForm from './LoginForm';
+// BRING IN USEQUERY TO GET USER'S INFO IN DATABASE
 import { useQuery } from '@apollo/client';
 import { QUERY_ME } from '../utils/queries';
-
+// BRING IN AUTHENTICATION SERVICES FUNCTIONS
 import Auth from '../utils/auth';
 
 // FOR STATIC PUBLIC DIRECTORY HREFS
@@ -14,9 +18,9 @@ const {PUBLIC_URL} = process.env
 const AppNavbar = () => {
   // set modal display state
   const [showModal, setShowModal] = useState(false);
-
+  // QUERY TO GET USER'S INFO IN DATABASE
   const { loading, data } = useQuery(QUERY_ME);
-
+  // SET USER'S DATA TO VARIABLE, IF FOUND
   const userData = data?.me || {};
 
   // if data isn't here yet, say so
@@ -24,6 +28,7 @@ const AppNavbar = () => {
     return <h2>LOADING...</h2>;
   }
 
+  // NAVBAR COMPONENT TO RENDER
   return (
     <>
       <Navbar bg='dark' variant='dark' expand='lg'>
